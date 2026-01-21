@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PACE-preTAVR Risk Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #1a1a2e;
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .form-group:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .form-label {
+      display: block;
+      color: #374151;
+      font-weight: 500;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .radio-option {
+      flex: 1;
+      position: relative;
+    }
+
+    .radio-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .radio-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #6b7280;
+      transition: all 0.2s ease;
+    }
+
+    .radio-option input[type="radio"]:checked + label {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+      color: white;
+    }
+
+    .radio-option:hover label {
+      border-color: #667eea;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    input[type="number"]::placeholder {
+      color: #9ca3af;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 12px;
+      font-family: inherit;
+    }
+
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .calculate-btn:active {
+      transform: translateY(0);
+    }
+
+    .result-container {
+      margin-top: 24px;
+      padding: 24px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+    }
+
+    .result-container.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-label {
+      color: #166534;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      color: #15803d;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 32px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.85rem;
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .disclaimer {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    .disclaimer p {
+      margin-bottom: 12px;
+    }
+
+    .disclaimer p:last-child {
+      margin-bottom: 0;
+    }
+
+    .copyright {
+      font-weight: 500;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 24px;
+      }
+      
+      h1 {
+        font-size: 1.4rem;
+      }
+      
+      .form-group {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PACE-preTAVR</h1>
+    <p class="subtitle">Pacemaker Risk Calculator</p>
+    
+    <div class="form-group">
+      <span class="form-label">First grade atrioventricular block</span>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="q1" id="q1-yes" value="Yes">
+          <label for="q1-yes">Yes</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="q1" id="q1-no" value="No">
+          <label for="q1-no">No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <span class="form-label">Right bundle branch block</span>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="q2" id="q2-yes" value="Yes">
+          <label for="q2-yes">Yes</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="q2" id="q2-no" value="No">
+          <label for="q2-no">No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <span class="form-label">Self-expandable TAVR</span>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="q3" id="q3-yes" value="Yes">
+          <label for="q3-yes">Yes</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="q3" id="q3-no" value="No">
+          <label for="q3-no">No</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="num4">TAVR diameter (mm)</label>
+      <input type="number" id="num4" placeholder="Enter diameter in millimetres">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="num5">Left ventricular outflow tract (mm)</label>
+      <input type="number" id="num5" placeholder="Enter LVOT in millimetres">
+    </div>
+
+    <button class="calculate-btn" onclick="myFunction()">Calculate Pacemaker Risk</button>
+
+    <div class="result-container" id="resultContainer">
+      <div class="result-label">Estimated Risk</div>
+      <div class="result-value" id="resultText"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="disclaimer">
+      <p>The algorithm has been developed by clinicians and researchers based on data derived from a multicentre observational study conducted in patients undergoing transcatheter aortic valve replacement. The model is intended for research and educational purposes only. It reflects population-level associations and may not be generalisable to all clinical settings or individual patients.</p>
+      <p>This calculator is not intended to replace clinical judgement or to be used as the sole basis for medical decision-making. All diagnostic and therapeutic decisions must be made by qualified healthcare professionals in consultation with the patient, taking into account the individual clinical context. The authors and collaborators disclaim any responsibility for the clinical use or misuse of this tool or for decisions made based on its results.</p>
+    </div>
+    <div class="copyright">© 2026 Irene Torres-Chilleron. All rights reserved.</div>
+  </footer>
+
+  <script>
+    function getRadioValue(name) {
+      const radios = document.getElementsByName(name);
+      for (let i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+          return radios[i].value;
+        }
+      }
+      return null;
+    }
+
+    function myFunction() {
+      const q1 = getRadioValue("q1");
+      const q1Binary = getRadioValue("q1") === "Yes" ? 1 : 0;
+      const q2 = getRadioValue("q2");
+      const q2Binary = getRadioValue("q2") === "Yes" ? 1 : 0;
+      const q3 = getRadioValue("q3");
+      const q3Binary = getRadioValue("q3") === "Yes" ? 1 : 0;
+      const num4 = document.getElementById("num4").value;
+      const num5 = document.getElementById("num5").value;
+
+     const z = -1.896
+          + 0.565 * q1Binary
+          + 1.734 * q2Binary
+          - 0.111 * q3Binary
+          - 0.026 * num4
+          + 0.049 * num5;
+
+const result = 1 / (1 + Math.exp(-z));
+const percentage = (result * 100).toFixed(2);
+
+      document.getElementById("resultText").textContent = percentage + "%";
+      document.getElementById("resultContainer").classList.add("show");
+    }
+  </script>
+
+</body>
+</html>
